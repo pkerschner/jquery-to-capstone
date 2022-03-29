@@ -1,16 +1,41 @@
+let parms;
 
 $().ready(() => {
 
+    parms = getUrlParms();
+    console.debug("Parms:", parms);
+
     $("#refresh").on("click", () => {
         refresh();
+    });
+
+    $("#delete").on("click", () => {
+        remove();
     });
 
     refresh();
 
 });
 
-const refresh = () => {    
-    $.getJSON("http://localhost:65298/api/users/3")
+const remove = () => {
+    let id = parms.id;
+    $.ajax({
+        method: "DELETE",
+        url: `http://localhost:65298/api/users/${id}`,
+        contentType: "application/json"
+    })
+        .then((res) => {
+            console.debug("Delete response", res);
+            document.location.href = "index.html";
+        })
+        .fail((err) => {
+            console.debug("ERROR", err);
+        });
+}
+
+const refresh = () => {
+    let id = parms.id;
+    $.getJSON(`http://localhost:65298/api/users/${id}`)
         .then((res) => {
             console.debug(res);
             display(res);
